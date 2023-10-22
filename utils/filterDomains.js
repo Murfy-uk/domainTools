@@ -9,9 +9,7 @@ class DomainNameFilter {
   }
 
   extractDomainNames(text) {
-    const domainRegex =
-      /(?:(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+\.[a-zA-Z]{2,6}))/g;
-
+    const domainRegex = /(?:^|\s)([a-zA-Z0-9-]+\.[a-zA-Z]{2,6})(?=$|\s)/g;
     return text.match(domainRegex) || [];
   }
 
@@ -25,7 +23,8 @@ class DomainNameFilter {
       );
       return (
         !this.exclude.includes(domainWithoutExtension) &&
-        domainWithoutExtension.indexOf(".") !== -1
+        domainWithoutExtension.indexOf(".") !== -1 &&
+        domainWithoutExtension.indexOf(".") !== 0
       );
     });
     return this.filteredDomainNames;
