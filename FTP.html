@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FTP File Downloader</title>
+  </head>
+  <body>
+    <h1>FTP File Downloader</h1>
+
+    <script>
+      // FTP server configuration
+      const ftpConfig = {
+        host: "ftp.godaddy.com",
+        user: "auctions",
+        // password: "your_password", // Include the password if required
+        port: 21,
+      };
+
+      // File name to download
+      const fileName = "all_listings.json.zip";
+
+      // Construct the FTP URL
+      const ftpUrl = `ftp://${ftpConfig.user}@${ftpConfig.host}/${fileName}`;
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("GET", ftpUrl, true);
+      xhr.responseType = "blob";
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const blob = xhr.response;
+          const a = document.createElement("a");
+          a.href = window.URL.createObjectURL(blob);
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(a.href);
+          a.remove();
+          alert(`File downloaded successfully: ${fileName}`);
+        } else {
+          console.error(`File not found or access denied: ${fileName}`);
+        }
+      };
+
+      xhr.onerror = () => {
+        console.error("Error downloading file.");
+      };
+
+      xhr.send();
+    </script>
+  </body>
+</html>

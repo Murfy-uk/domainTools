@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FTP File Downloader</title>
+  </head>
+  <body>
+    <h1>FTP File Downloader</h1>
+    <form id="downloadForm">
+      <label for="fileNameInput">Enter File Name:</label>
+      <input type="text" id="fileNameInput" name="fileNameInput" required />
+      <button type="button" id="downloadButton">Download File</button>
+    </form>
+
+    <script>
+      class FtpFileDownloader {
+        constructor() {
+          // Get references to the input element and download button
+          this.fileNameInput = document.getElementById("fileNameInput");
+          this.downloadButton = document.getElementById("downloadButton");
+
+          // Add an event listener to the download button
+          this.downloadButton.addEventListener("click", () =>
+            this.downloadFile()
+          );
+
+          // FTP server configuration
+          this.ftpServer = "ftp.godaddy.com"; // Replace with your FTP server URL
+          this.ftpUsername = "auctions";
+          //   this.ftpPassword = "";
+        }
+
+        async downloadFile() {
+          try {
+            // Get the file name from the input box
+            const fileName = this.fileNameInput.value.trim();
+
+            if (!fileName) {
+              alert("Please enter a valid file name.");
+              return;
+            }
+
+            // Construct the FTP URL
+            const ftpUrl = `ftp.godaddy.com/${fileName}`;
+
+            // Fetch the file from the FTP server using basic authentication
+            const response = await fetch(ftpUrl, {
+              method: "GET",
+              headers: {
+                Authorization: `Basic ${btoa(
+                  `${this.ftpUsername}:${this.ftpPassword}`
+                )}`,
+              },
+            });
+
+            if (response.status === 200) {
+              // File found, initiate download
+              const blob = await response.blob();
+              const url = window.URL.createObjectURL(blob);
+
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = fileName;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              a.remove();
+            } else {
+              alert(`File not found or access denied: ${fileName}`);
+            }
+          } catch (error) {
+            console.error("Error downloading file:", error);
+          }
+        }
+      }
+
+      // Initialize the FtpFileDownloader class when the DOM is ready
+      document.addEventListener("DOMContentLoaded", () => {
+        const downloader = new FtpFileDownloader();
+      });
+    </script>
+  </body>
+</html>
