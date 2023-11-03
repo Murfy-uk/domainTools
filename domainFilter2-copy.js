@@ -9,9 +9,8 @@ class DomainNameFilter {
   }
 
   extractDomainNames(text) {
-    // const domainRegex = /(?:^|\s)([a-zA-Z0-9-]+\.[a-zA-Z]{2,6})(?=$|\s)/g;
-
-    const domainRegex = /(?:^|\s)([a-zA-Z0-9-]+\.[a-zA-Z0-9-]+)(?=$|\s)/g;
+    const domainRegex =
+      /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)+)(?=\s|$)(?![0-9]+(\.[0-9]+)+$)/g;
 
     return text.match(domainRegex) || [];
   }
