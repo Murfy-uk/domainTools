@@ -9,12 +9,8 @@ class DomainNameFilter {
   }
 
   extractDomainNames(text) {
-    // const domainRegex =
-    //   /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)?)(?=\s|$)(?![0-9-]+\.[0-9-]+$)/g;
-
     const domainRegex =
-      /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)?)(?=\s|$)(?![0-9-]+\.[a-zA-Z-]+$)/g;
-
+      /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)+)(?=\s|$)(?![0-9]+(\.[0-9]+)+$)/g;
     return text.match(domainRegex) || [];
   }
 
@@ -65,3 +61,49 @@ class DomainNameFilter {
     this.displayFilteredDomainNames();
   }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("toggleColOrRow");
+  const sortAscendingButton = document.getElementById("sortAscending");
+  const sortDescendingButton = document.getElementById("sortDescending");
+
+  const excludeDomains = ["dan.com", "com", "co.uk"]; // Add domains to be excluded here
+  const domainFilter = new DomainNameFilter("filter", excludeDomains);
+
+  toggleButton.addEventListener("click", function () {
+    domainFilter.toggleDisplay();
+  });
+
+  sortAscendingButton.addEventListener("click", function () {
+    domainFilter.sortAscending();
+  });
+
+  sortDescendingButton.addEventListener("click", function () {
+    domainFilter.sortDescending();
+  });
+
+  function copyToClipboard() {
+    const outputTextArea = domainFilter.outputTextArea;
+    outputTextArea.select();
+    document.execCommand("copy");
+  }
+
+  const copyButton = document.getElementById("copyButton");
+  copyButton.addEventListener("click", function () {
+    copyToClipboard();
+  });
+
+  const clearButton = document.getElementById("clearButton");
+  clearButton.addEventListener("click", function () {
+    domainFilter.textArea.value = "";
+    domainFilter.outputTextArea.value = "";
+    domainFilter.totalDomains.textContent = "0";
+    domainFilter.filteredDomainNames = [];
+  });
+
+  const filterButton = document.getElementById("filterButton");
+  filterButton.addEventListener("click", () => {
+    domainFilter.filterDomainNames();
+    domainFilter.displayFilteredDomainNames();
+  });
+});

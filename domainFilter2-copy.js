@@ -1,47 +1,49 @@
 class DomainNameFilter {
-  constructor(textAreaId, exclude = []) {
+  constructor(textAreaId, excludeDomains = []) {
     this.textArea = document.getElementById(textAreaId);
     this.totalDomains = document.getElementById("totalDomains");
     this.displayAsRow = false;
     this.outputTextArea = document.getElementById("filterDone");
     this.filteredDomainNames = [];
-    this.exclude = exclude; // Add domains to be excluded here
+    this.excludeDomains = excludeDomains; // Use excludeDomains
   }
 
   extractDomainNames(text) {
     const domainRegex =
       /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)+)(?=\s|$)(?![0-9]+(\.[0-9]+)+$)/g;
-
     return text.match(domainRegex) || [];
   }
 
   filterDomainNames() {
-    const text = this.textArea.value;
-    const domainNames = this.extractDomainNames(text);
-    this.filteredDomainNames = domainNames.filter((domain) => {
-      const domainWithoutExtension = domain.replace(
-        /^(https?:\/\/)?(www\.)?/,
-        ""
-      );
-      return (
-        !this.exclude.includes(domainWithoutExtension) &&
-        domainWithoutExtension.indexOf(".") !== -1 &&
-        domainWithoutExtension.indexOf(".") !== 0
-      );
-    });
+    // Remove commas from the input text before processing
+    const text = this.textArea.value.replace(/,/g, "");
+
+    // Extract domain names and convert them to lowercase for case-insensitive comparison
+    const domainNames = this.extractDomainNames(text).map((domain) =>
+      domain.toLowerCase()
+    );
+
+    // Use Set to remove duplicates from the extracted domain names
+    const uniqueDomainNames = new Set(domainNames);
+
+    // Filter out excluded domains and invalid domains (combined logic)
+    this.filteredDomainNames = Array.from(uniqueDomainNames).filter(
+      (domain) => {
+        const domainWithoutExtension = domain
+          .replace(/^(https?:\/\/)?(www\.)?/, "")
+          .toLowerCase();
+
+        return (
+          domainWithoutExtension !== "dan.com" && // Exclude "dan.com"
+          !this.excludeDomains.includes(domainWithoutExtension) &&
+          domainWithoutExtension.indexOf(".") !== -1 &&
+          domainWithoutExtension.indexOf(".") !== 0
+        );
+      }
+    );
+
     return this.filteredDomainNames;
   }
-
-  // displayFilteredDomainNames() {
-  //   const totalDomains = this.filteredDomainNames.length;
-  //   this.totalDomains.textContent = totalDomains;
-
-  //   if (this.displayAsRow) {
-  //     this.outputTextArea.value = this.filteredDomainNames.join(", ");
-  //   } else {
-  //     this.outputTextArea.value = this.filteredDomainNames.join("\n");
-  //   }
-  // }
 
   displayFilteredDomainNames() {
     const totalDomains = this.filteredDomainNames.length;
@@ -79,7 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const sortAscendingButton = document.getElementById("sortAscending");
   const sortDescendingButton = document.getElementById("sortDescending");
 
-  const excludeDomains = ["dan.com", "com", "co.uk"]; // Add domains to be excluded here
+  const excludeDomains = ["Dan.com"];
+
   const domainFilter = new DomainNameFilter("filter", excludeDomains);
 
   toggleButton.addEventListener("click", function () {
