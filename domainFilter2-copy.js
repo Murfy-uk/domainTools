@@ -16,7 +16,7 @@ class DomainNameFilter {
 
   filterDomainNames() {
     // Remove commas from the input text before processing
-    const text = this.textArea.value.replace(/,/g, "");
+    const text = this.textArea.value.replace(/,/g, " ");
 
     // Extract domain names and convert them to lowercase for case-insensitive comparison
     const domainNames = this.extractDomainNames(text).map((domain) =>
