@@ -9,7 +9,7 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(ROOT, "public");
 const DATA_DIR = path.join(ROOT, "data");
 const DATA_FILE = path.join(DATA_DIR, "domains.txt");
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 3636;
 const HOST = "127.0.0.1";
 const MAX_BODY_BYTES = 5 * 1024 * 1024;
 
@@ -94,7 +94,9 @@ async function handleFilter(req, res) {
 async function serveStatic(req, res) {
   let pathname;
   try {
-    pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
+    pathname = decodeURIComponent(
+      new URL(req.url, "http://localhost").pathname,
+    );
   } catch {
     res.writeHead(400).end("Bad request");
     return;
