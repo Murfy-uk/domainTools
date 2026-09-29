@@ -8,33 +8,42 @@ class DomainNameFilter {
     this.excludeDomains = excludeDomains; // Use excludeDomains
   }
 
+  // extractDomainNames(text) {
+  //   const domainRegex =
+  //     /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)+)(?=\s|$)(?![0-9]+(\.[0-9]+)+$)/g;
+  //   const extractedDomains = text.match(domainRegex) || [];
+  //   const finalDomains = extractedDomains.map((domain) => domain.toLowerCase());
+  //   console.log(finalDomains);
+  //   return finalDomains;
+  // }
+
   extractDomainNames(text) {
     const domainRegex =
       /(?:^|\s)([a-zA-Z0-9-]+(\.[a-zA-Z-]+)+)(?=\s|$)(?![0-9]+(\.[0-9]+)+$)/g;
-    return text.match(domainRegex) || [];
+    const extractedDomains = text.match(domainRegex) || [];
+    console.log(extractedDomains);
+    // Use Set to remove duplicates after converting to lowercase
+    const uniqueDomains = new Set(
+      extractedDomains.map((domain) => domain.toLowerCase())
+    );
+    console.log(Array.from(uniqueDomains));
+    return Array.from(uniqueDomains);
   }
 
   filterDomainNames() {
-    // Remove commas from the input text before processing
-    const text = this.textArea.value.replace(/,/g, " ");
-
-    // Extract domain names and convert them to lowercase for case-insensitive comparison
-    const domainNames = this.extractDomainNames(text).map((domain) =>
-      domain.toLowerCase()
-    );
-
-    // Use Set to remove duplicates from the extracted domain names
+    const lowerCaseText = this.textArea.value.toLowerCase();
+    const textWithoutCommas = lowerCaseText.replace(/,/g, " ");
+    const domainNames = this.extractDomainNames(textWithoutCommas);
     const uniqueDomainNames = new Set(domainNames);
 
-    // Filter out excluded domains and invalid domains (combined logic)
     this.filteredDomainNames = Array.from(uniqueDomainNames).filter(
       (domain) => {
-        const domainWithoutExtension = domain
-          .replace(/^(https?:\/\/)?(www\.)?/, "")
-          .toLowerCase();
-
+        const domainWithoutExtension = domain.replace(
+          /^(https?:\/\/)?(www\.)?/,
+          ""
+        );
         return (
-          domainWithoutExtension !== "dan.com" && // Exclude "dan.com"
+          domain !== "dan.com" &&
           !this.excludeDomains.includes(domainWithoutExtension) &&
           domainWithoutExtension.indexOf(".") !== -1 &&
           domainWithoutExtension.indexOf(".") !== 0

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Domain Name Filter</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background: #f5f6f8;
+      }
+      .card {
+        max-width: 960px;
+      }
+      textarea {
+        font-family: SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9rem;
+      }
+      .btn-toolbar .btn {
+        margin: 0 0.5rem 0.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container py-4">
+      <div class="card shadow-sm mx-auto">
+        <div class="card-body">
+          <h1 class="h4 mb-4">Domain Name Filter</h1>
+
+          <div class="form-group">
+            <label for="filter"><b>Dump your domain laden text here:</b></label>
+            <textarea
+              id="filter"
+              class="form-control"
+              rows="10"
+              placeholder="Paste anything — lists, emails, URLs, CSV…"
+              autofocus
+            ></textarea>
+            <small class="form-text text-muted">
+              Tip: press Ctrl/⌘ + Enter to filter.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="filterDone"
+              ><b>Domains from above will appear here:</b></label
+            >
+            <textarea
+              id="filterDone"
+              class="form-control"
+              rows="10"
+              readonly
+            ></textarea>
+          </div>
+
+          <p class="mb-3">
+            Total Domains Found:
+            <span id="totalDomains" class="badge badge-primary">0</span>
+          </p>
+
+          <div class="btn-toolbar">
+            <button type="button" id="filterButton" class="btn btn-primary">
+              Filter
+            </button>
+            <button type="button" id="toggleColOrRow" class="btn btn-secondary">
+              Toggle Col / Row
+            </button>
+            <button type="button" id="copyButton" class="btn btn-success">
+              Copy
+            </button>
+            <button type="button" id="sortAscending" class="btn btn-info">
+              Sort A → Z
+            </button>
+            <button type="button" id="sortDescending" class="btn btn-warning">
+              Sort Z → A
+            </button>
+            <button type="button" id="clearButton" class="btn btn-danger">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
