@@ -1,89 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Domain Name Filter</title>
+    <title>Domain Filter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
-    <style>
-      body {
-        background: #f5f6f8;
-      }
-      .card {
-        max-width: 960px;
-      }
-      textarea {
-        font-family: SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 0.9rem;
-      }
-      .btn-toolbar .btn {
-        margin: 0 0.5rem 0.5rem 0;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="container py-4">
-      <div class="card shadow-sm mx-auto">
-        <div class="card-body">
-          <h1 class="h4 mb-4">Domain Name Filter</h1>
-
-          <div class="form-group">
-            <label for="filter"><b>Dump your domain laden text here:</b></label>
-            <textarea
-              id="filter"
-              class="form-control"
-              rows="10"
-              placeholder="Paste anything — lists, emails, URLs, CSV…"
-              autofocus
-            ></textarea>
-            <small class="form-text text-muted">
-              Tip: press Ctrl/⌘ + Enter to filter.
-            </small>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+              <path d="M3 4h18l-7 8.5V19l-4 2v-8.5z" />
+            </svg>
           </div>
-
-          <div class="form-group">
-            <label for="filterDone"
-              ><b>Domains from above will appear here:</b></label
-            >
-            <textarea
-              id="filterDone"
-              class="form-control"
-              rows="10"
-              readonly
-            ></textarea>
-          </div>
-
-          <p class="mb-3">
-            Total Domains Found:
-            <span id="totalDomains" class="badge badge-primary">0</span>
-          </p>
-
-          <div class="btn-toolbar">
-            <button type="button" id="filterButton" class="btn btn-primary">
-              Filter
-            </button>
-            <button type="button" id="toggleColOrRow" class="btn btn-secondary">
-              Toggle Col / Row
-            </button>
-            <button type="button" id="copyButton" class="btn btn-success">
-              Copy
-            </button>
-            <button type="button" id="sortAscending" class="btn btn-info">
-              Sort A → Z
-            </button>
-            <button type="button" id="sortDescending" class="btn btn-warning">
-              Sort Z → A
-            </button>
-            <button type="button" id="clearButton" class="btn btn-danger">
-              Clear
-            </button>
+          <div>
+            <h1>Domain Filter</h1>
+            <p>Pull every domain out of any text, deduped and lowercased.</p>
           </div>
         </div>
-      </div>
-    </main>
+        <div class="hint"><kbd>⌘ ↵</kbd> to filter</div>
+      </header>
+
+      <main class="panes">
+        <section class="pane">
+          <div class="pane-head">
+            <label for="filter">Input</label>
+            <span class="muted">Lists, emails, URLs, CSV, anything</span>
+          </div>
+          <textarea
+            id="filter"
+            class="pane-body input"
+            placeholder="Paste your domain-laden text here…"
+            spellcheck="false"
+            autofocus
+          ></textarea>
+          <div class="pane-foot">
+            <button type="button" id="clearButton" class="btn">Clear</button>
+            <button type="button" id="filterButton" class="btn btn-primary">
+              Filter domains <kbd>⌘↵</kbd>
+            </button>
+          </div>
+        </section>
+
+        <section class="pane">
+          <div class="pane-head">
+            <div class="title-row">
+              <h2>Domains</h2>
+              <span class="count"><span id="totalDomains">0</span> found</span>
+            </div>
+            <span class="muted">Below is your stripped data</span>
+          </div>
+          <div id="filterDone" class="pane-body output" aria-live="polite">
+            <p class="empty">Domains from your text will appear here.</p>
+          </div>
+          <div class="pane-foot">
+            <div class="tools">
+              <div class="segmented" role="group" aria-label="Output format">
+                <button type="button" id="formatLines" aria-pressed="true">
+                  One per line
+                </button>
+                <button type="button" id="formatCommas" aria-pressed="false">
+                  Comma list
+                </button>
+              </div>
+              <button type="button" id="sortAscending" class="btn">
+                A → Z
+              </button>
+              <button type="button" id="sortDescending" class="btn">
+                Z → A
+              </button>
+            </div>
+            <button type="button" id="copyButton" class="btn btn-dark">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                aria-hidden="true"
+              >
+                <rect x="9" y="9" width="12" height="12" rx="2" />
+                <path
+                  d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"
+                />
+              </svg>
+              <span id="copyLabel">Copy all</span>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
     <script type="module" src="app.js"></script>
   </body>
 </html>

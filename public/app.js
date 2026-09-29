@@ -4,14 +4,41 @@ const input = document.getElementById("filter");
 const output = document.getElementById("filterDone");
 const total = document.getElementById("totalDomains");
 const filterButton = document.getElementById("filterButton");
-const copyButton = document.getElementById("copyButton");
+const copyLabel = document.getElementById("copyLabel");
+const formatLines = document.getElementById("formatLines");
+const formatCommas = document.getElementById("formatCommas");
 
 const state = { domains: [], asRow: false };
 let latestRequest = 0;
 
+function asText() {
+  return state.domains.join(state.asRow ? ", " : "\n");
+}
+
 function render() {
   total.textContent = state.domains.length;
-  output.value = state.domains.join(state.asRow ? ", " : "\n");
+  formatLines.setAttribute("aria-pressed", String(!state.asRow));
+  formatCommas.setAttribute("aria-pressed", String(state.asRow));
+
+  if (state.domains.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "Domains from your text will appear here.";
+    output.replaceChildren(empty);
+  } else if (state.asRow) {
+    const line = document.createElement("p");
+    line.className = "commas";
+    line.textContent = asText();
+    output.replaceChildren(line);
+  } else {
+    const list = document.createElement("ol");
+    for (const domain of state.domains) {
+      const item = document.createElement("li");
+      item.textContent = domain;
+      list.append(item);
+    }
+    output.replaceChildren(list);
+  }
 }
 
 async function fetchDomains(text) {
@@ -49,15 +76,28 @@ function sort(direction) {
   render();
 }
 
+function setFormat(asRow) {
+  state.asRow = asRow;
+  render();
+}
+
 async function copy() {
+  const text = asText();
   try {
-    await navigator.clipboard.writeText(output.value);
+    await navigator.clipboard.writeText(text);
   } catch {
-    output.select();
+    // Clipboard API needs a secure context; fall back to a hidden textarea.
+    const scratch = document.createElement("textarea");
+    scratch.value = text;
+    scratch.style.position = "fixed";
+    scratch.style.opacity = "0";
+    document.body.append(scratch);
+    scratch.select();
     document.execCommand("copy");
+    scratch.remove();
   }
-  copyButton.textContent = "Copied!";
-  setTimeout(() => (copyButton.textContent = "Copy"), 1500);
+  copyLabel.textContent = "Copied!";
+  setTimeout(() => (copyLabel.textContent = "Copy all"), 1500);
 }
 
 function clear() {
@@ -70,11 +110,9 @@ function clear() {
 }
 
 filterButton.addEventListener("click", filter);
-copyButton.addEventListener("click", copy);
-document.getElementById("toggleColOrRow").addEventListener("click", () => {
-  state.asRow = !state.asRow;
-  render();
-});
+document.getElementById("copyButton").addEventListener("click", copy);
+formatLines.addEventListener("click", () => setFormat(false));
+formatCommas.addEventListener("click", () => setFormat(true));
 document
   .getElementById("sortAscending")
   .addEventListener("click", () => sort(1));
